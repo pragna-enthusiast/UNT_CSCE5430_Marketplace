@@ -1,0 +1,1 @@
+This "dumps" directory contains data dump to be restored onto a cloned/re-created DB.
