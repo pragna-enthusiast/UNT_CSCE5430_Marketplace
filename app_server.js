@@ -1,9 +1,10 @@
 
 
-// Load mysql2 module, for mysql 8.xx,
-// if using mysql 5.xx, use mysql module
-const mysql = require('mysql2');
 
+// mysql2 module, for mysql 8.xx,
+// if using mysql 5.xx, use mysql module
+// const mysql = require('mysql');
+const mysql = require('mysql2');
 
 // Create mysql db connection
 const mysql_dbconnection = mysql.createConnection({
@@ -19,30 +20,40 @@ mysql_dbconnection.connect(function(err) {
     console.log("Connected to MySQL DB!");
 });
 
-var query_str =
-    "SELECT * " +
-    "FROM user ";
-var query = mysql_dbconnection.query(query_str, function(err, rows, fields) {
-    if (err) { throw err; }
-    else { console.log (rows);}
 
-} );    
 
-// Load HTTP module
-const http = require("http");
+// Load modules
+const app_server = require("express")();
+// const http = require("http");
 const hostname = "localhost"; // can also use "127.0.0.1", which is the ip for localhost
 const port = 3000;
 
-//Create HTTP server and listen on port 3000 for incoming requests
-const server = http.createServer((req, res) => {
-
-  //Set the response HTTP header with HTTP status and Content type
-  res.statusCode = 200;
-  res.setHeader('Content-Type', 'text/plain');
-  res.end('Testing: Server is listening to request!\n');
+// Basic GET-route
+app_server.get("/", (req, res) => {
+  try {
+    console.log("Base GET-route hit.");
+    res.status(200).json({ message: "GET tested!" });
+  } catch (err) {
+    console.error(err.message);
+  }
 });
 
-//listen for request on port 3000, and as a callback function have the port listened on logged
-server.listen(port, hostname, () => {
+// Basic PUT-route
+app_server.put("/", (req, res) => {
+  try {
+    console.log("Base PUT-route hit");
+    res.status(200).json({ message: "PUT tested!" });
+  } catch (e) {
+    console.error(e.message);
+  }
+});
+
+// Set default route, i.e. 404-page-not-found
+app_server.use((req, res) => {
+  res.status(404).json({ error: "Invalid route!" });
+});
+
+// Listen for request on port 3000, and as a callback function have the port listened on logged
+app_server.listen(port, hostname, () => {
   console.log(`Server running at http://${hostname}:${port}/`);
 });
